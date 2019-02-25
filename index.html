@@ -1,1 +1,183 @@
-Project 1
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expected Population Growth 50 Years</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+
+
+    <style>
+        body { font: 12px Arial;}
+
+        path {
+            stroke: steelblue;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        }
+
+        .container .header {
+            height: 65px;
+        }
+
+        .container .header .text {
+            float: left;
+            vertical-align: bottom;
+            font-family: sans-serif;
+            font-size: x-large;
+        }
+
+    </style>
+
+
+</head>
+<div id="container" class="container">
+    <div class="header">
+        <div class="header text">Projected Population Next 50 Years</div>
+    </div>
+</div>
+<body>
+<p>
+    This graph shows the projected population of the top 10 countries with the current highest population. Please double click
+    names of countries to show their population.
+</p>
+<script>
+        var parseTime = d3.timeParse("%Y");
+        bisectDate = d3.bisector(function(d) { return d.year; }).left;
+
+        //Read the data
+        d3.csv("countries.csv", function(error, data) {
+            if (error) throw error;
+            //format data
+            data.forEach(function (d) {
+                d.year = parseTime(+d.year);
+                d.population = +d.population;
+            });
+            console.log(data);
+
+            // Set the dimensions of the canvas
+            var margin = {top: 30, right: 20, bottom: 30, left: 50},
+                width = 1500 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+
+            var formatNumber = d3.format(".1f");
+
+            // Set the ranges
+            var x = d3.scaleTime()
+                .range([0, width]);
+
+            var y = d3.scaleLinear()
+                .domain([0, 1e9])
+                .range([height, 0]);
+
+            var xAxis = d3.axisBottom(x)
+                .ticks(d3.timeYear);
+
+            var yAxis = d3.axisRight(y)
+                .tickSize(width)
+                .tickFormat(function(d) {
+                    var s = formatNumber(d / 1e9);
+                    return this.parentNode.nextSibling
+                        ? "\xa0" + s
+                        : s + " Billion People";
+                });
+
+            // Define the line
+            var line = d3.line()
+                .x(function(d) { return x(d.year); })
+                .y(function(d) { return y(d.population); });
+
+
+            // Add the svg canvas to page
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
+            var g = svg.append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+            // Scale the range of the data
+            x.domain(d3.extent(data, function(d) { return d.year; }));
+            y.domain([0, d3.max(data, function(d) { return d.population; })]);
+
+            // Nest the entries by symbol
+            var dataNest = d3.nest()
+                .key(function(d) {return d.country;})
+                .entries(data);
+
+            // set the colour scale
+            var color = d3.scaleOrdinal(d3.schemeSet2);
+
+            // Loop through the nest to assign line and color for line
+            dataNest.forEach(function(d,i) {
+
+                svg.append("path")
+                    .attr("class", "line")
+                    .style("opacity", 0)
+                    .style("stroke", function () { // Add the colours dynamically
+                        return d.color = color(d.key);
+                    })
+                    .attr("id", 'tag' + d.key.replace(/\s+/g, '')) // assign an ID
+                    .attr("d", line(d.values));
+
+                svg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(customXAxis);
+
+                svg.append("g")
+                    .call(customYAxis);
+
+                function customXAxis(g) {
+                    g.call(xAxis);
+                    g.call(d3.axisBottom(x)
+                        .ticks(25));
+                    g.select(".domain").remove();
+                }
+
+                function customYAxis(g) {
+                    g.call(yAxis);
+                    g.select(".domain").remove();
+                    g.selectAll(".tick:not(:first-of-type) line").attr("stroke", "#777777").attr("stroke-dasharray", "2,2");
+                    g.selectAll(".tick text").attr("x", 4).attr("dy", -4);
+                }
+
+                var legendSpace = width / dataNest.length;
+
+
+                svg.append("text")
+                    .attr("x", (legendSpace / 2) + i * legendSpace)
+                    .attr("y", height + (margin.bottom / 2) + 15)
+                    .attr("class", "legend")
+                    .style("fill", function () {
+                        return d.color = color(d.key);
+                    })
+                    .on("click", function () {
+                        var active = !d.active,
+                            newOpacity = active ? 0 : 1;
+                        d3.select("#tag" + d.key.replace(/\s+/g, ''))
+                            .transition().duration(100)
+                            .style("opacity", newOpacity);
+                        d.active = active;
+                    })
+                    .text(d.key);
+
+            });
+
+    });
+
+</script>
+
+</body>
+</html>
