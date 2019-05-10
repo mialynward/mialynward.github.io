@@ -6,12 +6,30 @@
     <script src = '//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script>
 
     <div class="topNav">
-        <a class="active" href="https://jvermill91.github.io/CS4331-P2/wordCloud.html">Word Cloud</a>
-        <a href="https://jvermill91.github.io/CS4331-P2/Project2%20Map/map.html">Geospatial</a>
-        <a href="https://jvermill91.github.io/CS4331-P2/arcDiagram.html">Arc Diagram</a>
-        <a href="https://jvermill91.github.io/CS4331-P2/forceDirGraph.html">Force-Directed Graph</a><br><br><br>
+        <a class="active" href="https://mialynward.github.io/Braden_Final_Code.html">Map</a>
+        <a href="https://mialynward.github.io/static_heat_map.html">Static Heat Map</a>
+        <a href="https://mialynward.github.io/mobile_heat_map.html">Mobile Heat Map</a><br><br><br>
     </div>
+
     <style>
+        .topNav a {
+            float: left;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+            background-color: darkslategrey;
+        }
+        .topNav a:hover {
+            background-color: grey;
+            color: white;
+        }
+        .topNav a.active {
+            background-color: lightgrey;
+            color: black;
+        }
+
         .axis {
             stroke: black;
             stroke-width: 1px;
@@ -1036,7 +1054,6 @@
         output.innerHTML = timeStep;
 
     }
-
 </script>
 
 </body>

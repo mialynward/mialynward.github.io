@@ -4,13 +4,39 @@
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
 
+<div class="topNav">
+    <a href="https://mialynward.github.io/Braden_Final_Code.html">Map</a>
+    <a class="active" href="https://mialynward.github.io/static_heat_map.html">Static Heat Map</a>
+    <a href="https://mialynward.github.io/mobile_heat_map.html">Mobile Heat Map</a><br><br><br>
+</div>
+
+<style>
+    .topNav a {
+        float: left;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+        background-color: darkslategrey;
+    }
+    .topNav a:hover {
+        background-color: grey;
+        color: white;
+    }
+    .topNav a.active {
+        background-color: lightgrey;
+        color: black;
+    }
+</style>
+
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
 
 <script>
 
     // set the dimensions and margins of the graph
-    var margin = {top: 30, right: 30, bottom: 30, left: 80},
+    var margin = {top: 30, right: 30, bottom: 30, left: 40},
         width = 2000 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
@@ -24,7 +50,7 @@
             "translate(" + margin.left + "," + margin.top + ")");
 
     // Labels of row and columns
-    var myGroups = ["MySensor", "TestUnit", "CitizenScientist", "HSS", "XrayLady", "RadCurieous", "TaxiDriver", "ASWillhiem"]
+    var myGroups = ["1", "4", "6", "9", "11", "12", "13", "14", "15"]
     var myVars = ["0:00", "0:20", "0:40","1:00", "1:20", "1:40", "2:00", "2:20", "2:40", "3:00", "3:20", "3:40", "4:00", "4:20", "4:40", "5:00", "5:20", "5:40", "6:00", "6:20", "6:40","7:00","7:20","7:40","8:00","8:20", "8:40", "9:00", "9:20", "9:40", "10:00", "10:20", "10:40", "11:00", "11:20", "11:40", "12:00", "12:20", "12:40","13:00", "13:20", "13:40", "14:00", "14:20", "14:40", "15:00", "15:20", "15:40", "16:00", "16:20", "16:40", "17:00", "17:20", "17:40", "18:00", "18:20", "18:40", "19:00", "19:20", "19:40", "20:00", "20:20", "20:40", "21:00", "21:20", "21:20" ,"21:40", "22:00", "22:20", "22:40", "23:00", "23:20", "23:40"]
 
     // Build X scales and axis:
@@ -47,10 +73,10 @@
     // Build color scale
     var myColor = d3.scaleLinear()
         .range(["white", "#af0015"])
-        .domain([10,50])
+        .domain([10,20])
 
     //Read the data
-    d3.csv("mobile.csv", function(data) {
+    d3.csv("static.csv", function(data) {
 
         // create a tooltip
         var tooltip = d3.select("#my_dataviz")
